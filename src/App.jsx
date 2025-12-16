@@ -94,7 +94,7 @@ const ShareModal = ({ show, data, onClose }) => {
                 <>
                   <span className="pc-stat-item">|</span>
                   <span className="pc-stat-item">
-                     <span className="gray-txt">{otherPercent}%</span> Multi
+                     <span className="gray-txt">{otherPercent}%</span> Otro
                   </span>
                 </>
               )}
@@ -380,7 +380,7 @@ function App() {
                                 </div>
                                 {getMemberFromTrack(t)!=="Otro" ? 
                                     <span className="tag-bts">BTS</span> : 
-                                    <span className="tag-multi">Multi</span>
+                                    <span className="tag-multi">Otro</span>
                                 }
                               </div>
                             )}
