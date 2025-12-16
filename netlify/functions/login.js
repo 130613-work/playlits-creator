@@ -15,7 +15,6 @@ exports.handler = async function(event, context) {
     state: state
   });
 
-  // 5. Redirigimos
   return {
     statusCode: 302,
     headers: {
@@ -23,3 +22,4 @@ exports.handler = async function(event, context) {
     }
   };
 };
+
