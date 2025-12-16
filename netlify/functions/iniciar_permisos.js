@@ -2,13 +2,13 @@ const querystring = require('querystring');
 
 exports.handler = async function(event, context) {
   const client_id = process.env.SPOTIFY_CLIENT_ID;
-  // OJO: Asegúrate de que esta variable en Netlify termine en /callback
   const redirect_uri = process.env.REDIRECT_URI; 
 
-  // AQUÍ ESTÁ EL TRUCO: Pedimos permiso explícito para subir imágenes
+  // Permisos para playlist y FOTOS
   const scope = 'playlist-modify-public playlist-modify-private ugc-image-upload';
 
-  const authUrl = 'https://open.spotify.com/playlist/[ID]' +
+  // 👇 AQUÍ ESTABA EL ERROR: La dirección correcta es esta:
+  const authUrl = 'https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
       client_id: client_id,
