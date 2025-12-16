@@ -4,8 +4,12 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import html2canvas from 'html2canvas'; 
 import './App.css';
 
-// --- COLORES BIAS ---
-const MEMBER_COLORS = { "Jimin": "#FFD700", "Jung Kook": "#8A2BE2", "V": "#008000", "SUGA": "#000000", "Jin": "#FF69B4", "j-hope": "#FF0000", "RM": "#0000FF", "BTS": "#FFFFFF" };
+// --- COLORES BIAS (Agregado "Otro") ---
+const MEMBER_COLORS = { 
+  "Jimin": "#FFD700", "Jung Kook": "#8A2BE2", "V": "#008000", 
+  "SUGA": "#000000", "Jin": "#FF69B4", "j-hope": "#FF0000", 
+  "RM": "#0000FF", "BTS": "#FFFFFF", "Otro": "#555555" 
+};
 
 // --- UTILIDAD: COMPRESOR DE IMAGENES ---
 const compressImage = (file) => {
@@ -43,13 +47,19 @@ const Toast = ({ message, type }) => {
   return <div style={styles}><span>{type === 'error' ? '⚠️' : '✅'}</span> {message}</div>;
 };
 
-// --- SHARE MODAL ---
+// --- SHARE MODAL (Con Estadísticas BTS vs Otros) ---
 const ShareModal = ({ show, data, onClose }) => {
   if (!show) return null;
 
-  const webUrl = "https://creative-genie-6b6df5.netlify.app"; 
+  const webUrl = "https://creative-genie-6b6df5.netlify.app"; // Tu URL Nueva
   const playlistUrl = `https://open.spotify.com/playlist/${data.playlistId}`;
   const text = `¡Creé mi playlist "${data.name}"! 💜\n\nCréala tú aquí: ${webUrl}\n\nEscúchala aquí: ${playlistUrl}`;
+
+  // CÁLCULO DE PORCENTAJES
+  const totalSongs = data.count;
+  const btsCount = data.btsCount || 0;
+  const btsPercent = totalSongs > 0 ? Math.round((btsCount / totalSongs) * 100) : 0;
+  const otherPercent = 100 - btsPercent;
 
   const handleDownloadCard = async () => {
     const element = document.getElementById('bts-photocard');
@@ -75,11 +85,21 @@ const ShareModal = ({ show, data, onClose }) => {
             {data.image ? <img src={data.image} alt="" className="pc-image"/> : <div className="pc-image" style={{display:'flex',alignItems:'center',justifyContent:'center', fontSize:'4rem', background:'#111'}}>🎵</div>}
             <h3 className="pc-title">{data.name}</h3>
             <span className="pc-subtitle">Curated by ARMY</span>
+            
             <div className="pc-stats">
-              <span className="pc-stat-item"><span className="purple-txt">{data.count}</span> Canciones</span>
-              <span className="pc-stat-item">|</span>
-              <span className="pc-stat-item"><span className="purple-txt">100%</span> BTS</span>
+              <span className="pc-stat-item">
+                <span className="purple-txt">{btsPercent}%</span> BTS
+              </span>
+              {otherPercent > 0 && (
+                <>
+                  <span className="pc-stat-item">|</span>
+                  <span className="pc-stat-item">
+                     <span className="gray-txt">{otherPercent}%</span> Multi
+                  </span>
+                </>
+              )}
             </div>
+
             <div className="pc-footer">CREATOR FOR ARMY • {new Date().getFullYear()}</div>
           </div>
         </div>
@@ -102,7 +122,7 @@ const ShareModal = ({ show, data, onClose }) => {
 function App() {
   const [token, setToken] = useState(null); 
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
-  const [shareModal, setShareModal] = useState({ show: false, name: '', count: 0 });
+  const [shareModal, setShareModal] = useState({ show: false, name: '', count: 0, btsCount: 0 });
   const [playingPreview, setPlayingPreview] = useState(null);
   const audioRef = useRef(new Audio());
 
@@ -137,7 +157,6 @@ function App() {
   useEffect(() => {
     const getToken = async () => {
         try {
-            // Pedimos token al servidor para poder buscar canciones
             const { data } = await axios.get('/.netlify/functions/get_token');
             setToken(data.access_token);
         } catch (error) {
@@ -164,13 +183,23 @@ function App() {
     if (names.includes("j-hope")) return "j-hope";
     if (names.includes("RM")) return "RM";
     if (names.includes("BTS")) return "BTS";
-    return "Otro";
+    return "Otro"; // Si no es BTS, devuelve "Otro"
   };
 
   const updateStats = (tracks) => {
-    let count = 0; const stats = {};
-    tracks.forEach(t => { const m = getMemberFromTrack(t); if(m!=="Otro"){ count++; stats[m] = (stats[m]||0)+1; } });
-    setBtsCounter(count); setBiasStats(stats);
+    let btsCount = 0; 
+    const stats = {};
+    
+    tracks.forEach(t => { 
+        const m = getMemberFromTrack(t);
+        if(m !== "Otro"){ 
+            btsCount++; 
+        }
+        // Contamos TODOS en las estadísticas para la barra
+        stats[m] = (stats[m]||0)+1; 
+    });
+    setBtsCounter(btsCount); 
+    setBiasStats(stats);
   };
 
   const handleImageUpload = async (e) => {
@@ -210,14 +239,13 @@ function App() {
     showToast("¡Mezcla Inteligente Aplicada! 🔀", 'success');
   };
 
-  // --- PUBLICAR SIN LOGIN ---
+  // --- PUBLICAR ---
   const publishDraft = async () => {
     if (btsCounter < 30) { showToast(`Faltan canciones (${btsCounter}/30)`, 'error'); return; }
     if (!draftName) { showToast("Falta el nombre", 'error'); return; }
     
     setLoading(true);
     try {
-      // Enviamos la petición a TU servidor para que él cree la playlist
       const payload = {
           name: draftName,
           description: draftDesc || "Created with Creator for ARMY 💜",
@@ -231,6 +259,7 @@ function App() {
           show: true, 
           name: draftName, 
           count: draftTracks.length, 
+          btsCount: btsCounter, // Pasamos el contador de BTS para calcular %
           playlistId: data.id, 
           image: coverImage 
       });
@@ -255,7 +284,6 @@ function App() {
     if (!token) { showToast("Conectando con Spotify...", "warning"); return; }
     
     try {
-      // Usamos el token que nos dio el servidor
       const { data } = await axios.get("https://api.spotify.com/v1/search", { 
           headers: { Authorization: `Bearer ${token}` }, 
           params: { q: searchQuery, type: "track", limit: 12 } 
@@ -280,11 +308,11 @@ function App() {
             <input className="input-title" placeholder="Título..." value={draftName} onChange={e => setDraftName(e.target.value)} />
             <textarea className="input-desc" placeholder="Descripción..." value={draftDesc} onChange={e => setDraftDesc(e.target.value)} maxLength={300} />
             
-            {Object.keys(biasStats).length > 0 && btsCounter > 0 && (
+            {Object.keys(biasStats).length > 0 && draftTracks.length > 0 && (
               <div className="bias-box">
-                <div className="bias-header"><span>Bias Analyzer</span><span>{btsCounter}/30</span></div>
+                <div className="bias-header"><span>Bias Analyzer</span><span>{btsCounter}/30 (BTS)</span></div>
                 <div className="bias-bar">
-                  {Object.entries(biasStats).map(([m, c]) => <div key={m} className="bias-seg" style={{width:`${(c/btsCounter)*100}%`, background:MEMBER_COLORS[m]||'#555'}} />)}
+                  {Object.entries(biasStats).map(([m, c]) => <div key={m} className="bias-seg" style={{width:`${(c/draftTracks.length)*100}%`, background:MEMBER_COLORS[m]||'#555'}} />)}
                 </div>
                 <div className="bias-legend">
                   {Object.entries(biasStats).map(([m, c]) => <div key={m}><span className="legend-dot" style={{background:MEMBER_COLORS[m]||'#555'}}></span>{m}</div>)}
@@ -305,7 +333,7 @@ function App() {
 
           <main className="builder-content">
             <form onSubmit={searchSpotify} className="search-bar-wrapper">
-              <input className="search-input" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Buscar canciones de BTS..." />
+              <input className="search-input" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Buscar canciones (BTS u otros)..." />
               <button type="submit" className="btn-search-icon">🔍</button>
             </form>
             
@@ -350,7 +378,10 @@ function App() {
                                   <h6 style={{margin:0, color:'white', fontSize:'0.95rem'}}>{t.name}</h6>
                                   <span style={{fontSize:'0.8rem', color:'#a1a1aa'}}>{t.artist}</span>
                                 </div>
-                                {getMemberFromTrack(t)!=="Otro" && <span className="tag-bts">BTS</span>}
+                                {getMemberFromTrack(t)!=="Otro" ? 
+                                    <span className="tag-bts">BTS</span> : 
+                                    <span className="tag-multi">Multi</span>
+                                }
                               </div>
                             )}
                           </Draggable>
