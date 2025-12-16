@@ -332,7 +332,7 @@ function App() {
                 </div>
               ) : (
                 <DragDropContext onDragEnd={handleDraftDragEnd}>
-                  <Droppable droppableId="draft-list" direction="horizontal">
+                  <Droppable droppableId="draft-list">
                     {(provided) => (
                       <div ref={provided.innerRef} {...provided.droppableProps}>
                         {draftTracks.map((t, i) => (
