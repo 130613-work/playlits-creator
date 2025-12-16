@@ -47,7 +47,7 @@ const Toast = ({ message, type }) => {
 const ShareModal = ({ show, data, onClose }) => {
   if (!show) return null;
 
-  const webUrl = "https://zippy-sprinkles-8c1f3e.netlify.app"; 
+  const webUrl = "https://creative-genie-6b6df5.netlify.app"; 
   const playlistUrl = `https://open.spotify.com/playlist/${data.playlistId}`;
   const text = `¡Creé mi playlist "${data.name}"! 💜\n\nCréala tú aquí: ${webUrl}\n\nEscúchala aquí: ${playlistUrl}`;
 
