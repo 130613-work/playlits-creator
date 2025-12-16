@@ -1,55 +1,49 @@
 const axios = require('axios');
+const querystring = require('querystring');
 
 exports.handler = async function(event, context) {
-  // ---------------------------------------------------------
-  // 1. PON TUS DATOS REALES AQUÍ ENTRE COMILLAS (¡No los dejes vacíos!)
-  // ---------------------------------------------------------
-  const clientId = "7c17b5f396fe41df8ec41e87c6324d10"; 
-  const clientSecret = "e439742ebbf94271bfcf1f0fa3f669c9"; 
-  
-  // Esta URL debe ser idéntica a la que pusiste en login.js
-  const redirectUri = "http://127.0.0.1:8888/callback"; 
-  // ---------------------------------------------------------
+  const { code } = event.queryStringParameters || {};
 
-  const { code } = event.queryStringParameters;
+  const client_id = process.env.SPOTIFY_CLIENT_ID;
+  const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+  const redirect_uri = process.env.REDIRECT_URI;
+  const frontend_url = process.env.URL || 'https://zippy-sprinkles-8c1f3e.netlify.app';
 
   if (!code) {
-    return { statusCode: 400, body: "Falta el código" };
+    return { statusCode: 400, body: "Falta el código de autorización" };
   }
 
-  // Codificar credenciales para Spotify (Esto es lo que estaba fallando)
-  const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-
   try {
-    const response = await axios({
+    const authOptions = {
       method: 'post',
       url: 'https://accounts.spotify.com/api/token',
-      params: {
-        grant_type: 'authorization_code',
+      data: querystring.stringify({
         code: code,
-        redirect_uri: redirectUri
-      },
+        redirect_uri: redirect_uri, 
+        grant_type: 'authorization_code'
+      }),
       headers: {
-        'Authorization': `Basic ${authHeader}`,
+        'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64'),
         'Content-Type': 'application/x-www-form-urlencoded'
       }
-    });
+    };
 
-    const { access_token } = response.data;
+    const response = await axios(authOptions);
+    const { access_token, refresh_token } = response.data;
 
-    // Éxito: mandar el token a tu web
     return {
       statusCode: 302,
       headers: {
-        Location: `http://localhost:8888/#access_token=${access_token}`      }
+        Location: `${frontend_url}/#access_token=${access_token}&refresh_token=${refresh_token}`
+      }
     };
 
   } catch (error) {
-    console.log("ERROR SPOTIFY:", error.response ? error.response.data : error.message);
+    console.log("ERROR CALLBACK:", error.response ? error.response.data : error.message);
     return {
-      statusCode: 400,
+      statusCode: 500,
       body: JSON.stringify({
-        message: "Error conectando con Spotify",
+        message: "Error obteniendo el token de Spotify",
         error: error.response ? error.response.data : error.message
       })
     };
