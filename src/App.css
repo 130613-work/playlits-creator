@@ -18,11 +18,12 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  overflow: hidden; /* Evita scroll en el body, usamos scroll interno */
+  /* En PC ocultamos scroll del body porque usamos contenedores internos */
+  overflow: hidden; 
 }
 
 /* =========================================
-   2. LAYOUT PRINCIPAL (Dos Columnas)
+   2. LAYOUT PRINCIPAL
    ========================================= */
 .builder-layout {
   display: flex;
@@ -41,8 +42,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  overflow-y: auto; /* Scroll si la pantalla es bajita */
-  box-shadow: 5px 0 30px rgba(0,0,0,0.5);
+  overflow-y: auto;
   z-index: 10;
 }
 
@@ -51,235 +51,150 @@ body {
   flex: 1;
   background-color: var(--bg-dark);
   padding: 30px 40px;
-  overflow-y: auto; /* Scroll independiente */
+  overflow-y: auto; /* Scroll vertical para el contenido */
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 20px;
 }
 
 /* =========================================
-   3. COMPONENTES SIDEBAR (IZQUIERDA)
+   3. COMPONENTES SIDEBAR
    ========================================= */
-/* Portada Generada */
 .playlist-cover-gen {
   width: 100%;
-  aspect-ratio: 1; /* Cuadrado perfecto */
+  aspect-ratio: 1;
   background: linear-gradient(135deg, #2a2a2e 0%, #1a1a1c 100%);
   border-radius: 12px;
   border: 2px dashed #444;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: #555;
-  cursor: pointer;
-  transition: 0.3s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem; color: #555; cursor: pointer; transition: 0.3s;
   overflow: hidden;
 }
 .playlist-cover-gen:hover { border-color: var(--bts-purple); color: var(--bts-purple); }
 .playlist-cover-gen.active { border: none; }
 
-/* Inputs */
 .input-title, .input-desc {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.1);
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
-  width: 100%;
+  color: white; padding: 12px; border-radius: 8px; font-size: 1rem; outline: none; width: 100%;
 }
 .input-title { font-weight: bold; font-size: 1.2rem; }
 .input-desc { font-size: 0.9rem; resize: none; height: 80px; font-family: inherit; }
 .input-title:focus, .input-desc:focus { border-color: var(--bts-purple); }
 
-/* Bias Analyzer */
-.bias-box {
-  background: rgba(0,0,0,0.3);
-  padding: 15px;
-  border-radius: 12px;
-  margin-top: 10px;
-}
+.bias-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-top: 10px; }
 .bias-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 8px; }
 .bias-bar { height: 8px; background: #333; border-radius: 4px; display: flex; overflow: hidden; margin-bottom: 10px; }
 .bias-seg { height: 100%; }
 .bias-legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.7rem; color: #888; }
 .legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
 
-/* Botones */
 .btn-shuffle-smart {
-  background: linear-gradient(90deg, #333, #444);
-  color: white; border: none; padding: 12px; border-radius: 8px;
-  cursor: pointer; font-weight: 600; transition: 0.2s;
-  margin-top: auto;
+  background: linear-gradient(90deg, #333, #444); color: white; border: none; padding: 12px; border-radius: 8px;
+  cursor: pointer; font-weight: 600; transition: 0.2s; margin-top: auto;
 }
 .btn-shuffle-smart:hover { background: #555; }
 
 .btn-publish-big {
-  background: var(--bts-purple);
-  color: white; border: none; padding: 16px; border-radius: 12px;
+  background: var(--bts-purple); color: white; border: none; padding: 16px; border-radius: 12px;
   font-size: 1.1rem; font-weight: bold; cursor: pointer;
   box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
-  transition: transform 0.2s, box-shadow 0.2s;
-  margin-top: 10px;
+  transition: transform 0.2s; margin-top: 10px;
 }
-.btn-publish-big:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(138, 43, 226, 0.6); }
+.btn-publish-big:hover:not(:disabled) { transform: translateY(-2px); }
 .btn-publish-big:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
 /* =========================================
-   4. COMPONENTES CONTENT (DERECHA)
+   4. BUSCADOR Y RESULTADOS (AHORA HORIZONTAL)
    ========================================= */
-/* Buscador */
 .search-bar-wrapper {
   display: flex; gap: 10px;
-  background: rgba(255,255,255,0.05);
-  padding: 8px; border-radius: 50px;
-  border: 1px solid rgba(255,255,255,0.1);
-  max-width: 600px; margin: 0 auto; width: 100%;
+  background: rgba(255,255,255,0.05); padding: 8px; border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.1); width: 100%;
 }
-.search-input {
-  flex: 1; background: transparent; border: none; outline: none;
-  color: white; padding: 0 15px; font-size: 1rem;
-}
+.search-input { flex: 1; background: transparent; border: none; outline: none; color: white; padding: 0 15px; font-size: 1rem; }
 .btn-search-icon {
   background: var(--bts-purple); color: white; border: none;
-  width: 40px; height: 40px; border-radius: 50%;
-  cursor: pointer; font-size: 1.2rem;
-  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
 }
 
-/* Resultados de Búsqueda (Grid) */
+/* --- AQUÍ ESTÁ EL CAMBIO: Resultados en Scroll Horizontal --- */
 .results-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  display: flex; /* Flex en lugar de Grid */
   gap: 15px;
+  overflow-x: auto; /* Scroll horizontal */
+  padding-bottom: 15px;
+  /* Scrollbar fina */
+  scrollbar-width: thin;
+  scrollbar-color: var(--bts-purple) transparent;
 }
+
 .result-card {
+  min-width: 130px; /* Ancho fijo */
+  width: 130px;
   background: #27272a; border-radius: 8px; padding: 10px;
   cursor: pointer; transition: 0.2s; position: relative;
-  border: 1px solid transparent;
+  display: flex; flex-direction: column;
 }
 .result-card:hover { background: #3f3f46; transform: translateY(-3px); }
-.result-card img { width: 100%; border-radius: 6px; margin-bottom: 8px; }
-.result-info h5 { margin: 0; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.result-info p { margin: 0; font-size: 0.8rem; color: #a1a1aa; }
+.result-card img { width: 100%; aspect-ratio: 1; border-radius: 6px; margin-bottom: 8px; object-fit: cover; }
+.result-info h5 { margin: 0; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.result-info p { margin: 0; font-size: 0.75rem; color: #a1a1aa; }
+
 .btn-add-mini {
-  position: absolute; bottom: 60px; right: 5px;
-  width: 30px; height: 30px; background: var(--bts-purple);
+  position: absolute; bottom: 50px; right: 5px;
+  width: 28px; height: 28px; background: var(--bts-purple);
   color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  opacity: 0; transition: 0.2s;
+  font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); opacity: 0; transition: 0.2s;
 }
-.result-card:hover .btn-add-mini { opacity: 1; bottom: 70px; }
+.result-card:hover .btn-add-mini { opacity: 1; bottom: 60px; }
 .pulsate { animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
+
 /* =========================================
-   LISTA HORIZONTAL (CARRUSEL)
+   5. LISTA DE CANCIONES (DRAFT) - VUELVE A SER VERTICAL
    ========================================= */
 .track-list-container {
-  /* Quitamos el fondo oscuro para que se vea más limpio */
-  background: transparent;
-  padding: 10px 0;
-  min-height: 160px;
-  /* IMPORTANTE: Esto habilita el scroll horizontal */
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap; 
-  /* Ocultar barra de scroll fea pero permitir deslizar */
-  scrollbar-width: thin; 
-  scrollbar-color: var(--bts-purple) #222;
+  background: rgba(0,0,0,0.2);
+  border-radius: 16px;
+  padding: 20px;
+  /* Altura mínima para arrastrar */
+  min-height: 200px;
 }
 
-/* El contenedor interno del Drag&Drop debe ser Flex */
-.track-list-container > div {
-  display: flex;
-  gap: 15px;
-  padding-bottom: 10px; /* Espacio para el scroll */
-}
-
-/* Cada canción ahora es una TARJETA PEQUEÑA, no una fila */
 .list-row {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #27272a;
-  width: 110px; /* Ancho fijo */
-  height: 150px;
-  padding: 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.05);
-  flex-shrink: 0; /* Evita que se aplasten */
-  position: relative;
-  transition: transform 0.2s;
-}
-
-.list-row.is-dragging {
-  background: #3f3f46;
-  border-color: var(--bts-purple);
-  transform: scale(1.05) rotate(2deg);
-}
-
-/* Imagen más grande y centrada */
-.list-row img {
-  width: 70px;
-  height: 70px;
+  display: flex; /* Fila horizontal */
+  align-items: center; 
+  gap: 15px;
+  background: #27272a; 
+  padding: 10px 15px;
+  margin-bottom: 8px; 
   border-radius: 8px;
-  margin-bottom: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.2s;
 }
 
-/* Textos ajustados */
-.row-info {
-  text-align: center;
-  width: 100%;
-}
-.row-info h6 {
-  font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 2px !important;
-}
-.row-info span {
-  display: none; /* Ocultamos el artista para ahorrar espacio */
+.list-row.is-dragging { 
+  background: #3f3f46; 
+  border-color: var(--bts-purple); 
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5); 
 }
 
-/* Badge de BTS pequeño arriba a la derecha */
-.tag-bts {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  font-size: 0.6rem;
-  padding: 2px 4px;
-}
+/* Elementos dentro de la fila */
+.drag-handle { cursor: grab; color: #555; font-size: 1.2rem; }
+.list-row img { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; }
+.row-info { flex: 1; } /* El texto ocupa el espacio sobrante */
+.tag-bts { background: rgba(138, 43, 226, 0.2); color: #d8b4fe; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
 
-/* El número de orden */
-.list-row > span:first-child {
-  position: absolute;
-  top: 5px;
-  left: 8px;
-  font-size: 0.7rem;
-  background: rgba(0,0,0,0.5);
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
 
-/* El manejador de arrastre */
-.drag-handle {
-  display: none; /* Ya no hace falta, se puede arrastrar toda la tarjeta */
-}
 /* =========================================
-   5. MODALES Y EXTRAS
+   6. MODALES Y PHOTOCARD
    ========================================= */
 .modal-overlay-2 {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 10000;
+  display: flex; align-items: center; justify-content: center; z-index: 10000;
 }
 .modal-content-small, .share-content {
   background: #18181b; padding: 30px; border-radius: 20px;
@@ -294,24 +209,18 @@ body {
 .share-x { background: #000; border: 1px solid #333; }
 .share-wa { background: #25D366; }
 .btn-close-text { background: transparent; border: none; color: #777; margin-top: 15px; cursor: pointer; text-decoration: underline; }
-
-/* =========================================
-   6. PHOTOCARD NEON (La que se descarga)
-   ========================================= */
-.photocard-preview-container {
-  display: flex; justify-content: center; margin: 20px 0;
+.btn-download-card {
+  background: linear-gradient(90deg, #ff00cc, #333399); color: white; border: none; padding: 12px 24px; border-radius: 99px;
+  font-weight: bold; cursor: pointer; margin: 0 auto 20px auto; display: block;
 }
+
+/* Estilos Photocard */
+.photocard-preview-container { display: flex; justify-content: center; margin: 20px 0; }
 .photocard-node {
-  width: 300px; height: 450px;
-  background: linear-gradient(135deg, #000000, #2e1065, #000000);
-  border: 4px solid var(--bts-purple);
-  border-radius: 20px;
-  padding: 20px;
-  display: flex; flex-direction: column; align-items: center;
-  position: relative;
-  box-shadow: 0 0 30px rgba(138, 43, 226, 0.4);
-  font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  width: 300px; height: 450px; background: linear-gradient(135deg, #000000, #2e1065, #000000);
+  border: 4px solid var(--bts-purple); border-radius: 20px; padding: 20px;
+  display: flex; flex-direction: column; align-items: center; position: relative;
+  box-shadow: 0 0 30px rgba(138, 43, 226, 0.4); font-family: 'Inter', sans-serif; overflow: hidden;
 }
 .photocard-node::before {
   content: 'ARMY'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);
@@ -326,19 +235,42 @@ body {
 .purple-txt { color: #c084fc; }
 .pc-footer { margin-top: auto; font-size: 0.7rem; color: #52525b; letter-spacing: 1px; z-index: 1; }
 
-.btn-download-card {
-  background: linear-gradient(90deg, #ff00cc, #333399); color: white; border: none; padding: 12px 24px; border-radius: 99px;
-  font-weight: bold; cursor: pointer; margin: 0 auto 20px auto; display: block;
-}
-
 /* =========================================
-   7. RESPONSIVE (CELULAR)
+   7. RESPONSIVE (ARREGLADO)
    ========================================= */
 @media (max-width: 768px) {
-  .builder-layout { flex-direction: column; overflow-y: auto; height: auto; }
-  .builder-sidebar { width: 100%; min-width: 0; padding: 20px; border-right: none; border-bottom: 1px solid #333; overflow: visible; }
-  .builder-content { overflow: visible; padding: 20px; }
-  .search-bar-wrapper { position: sticky; top: 10px; z-index: 50; backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); }
-  .results-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-  .modal-content-small, .share-content { width: 95%; }
+  /* Habilitamos el scroll en todo el cuerpo para celular */
+  body { overflow: auto; }
+
+  .builder-layout {
+    flex-direction: column;
+    overflow-y: visible; /* Deja que el contenido fluya */
+    height: auto;
+  }
+
+  .builder-sidebar {
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+    border-right: none;
+    border-bottom: 1px solid #333;
+    /* Quitamos el scroll interno y dejamos que use el de la página */
+    overflow: visible; 
+  }
+
+  .builder-content {
+    overflow: visible;
+    padding: 20px;
+    height: auto;
+    padding-bottom: 80px; /* Espacio extra al final para scroll */
+  }
+
+  /* El buscador se queda pegado arriba al bajar */
+  .search-bar-wrapper {
+    position: sticky;
+    top: 10px;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.1);
+  }
 }
