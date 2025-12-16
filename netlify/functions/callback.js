@@ -7,7 +7,8 @@ exports.handler = async function(event, context) {
   const client_id = process.env.SPOTIFY_CLIENT_ID;
   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
   const redirect_uri = process.env.REDIRECT_URI;
-  const frontend_url = process.env.URL || 'https://zippy-sprinkles-8c1f3e.netlify.app';
+
+  const frontend_url = 'https://zippy-sprinkles-8c1f3e.netlify.app';
 
   if (!code) {
     return { statusCode: 400, body: "Falta el código de autorización" };
