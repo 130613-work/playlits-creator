@@ -120,29 +120,49 @@ body {
 
 /* --- AQUÍ ESTÁ EL CAMBIO: Resultados en Scroll Horizontal --- */
 .results-grid {
-.result-card {
-  min-width: 140px;  /* Ancho mínimo obligatorio */
-  width: 140px;      /* Ancho fijo */
-  flex-shrink: 0;    /* 🚨 ESTO ES LO IMPORTANTE: Prohíbe que se aplasten */
-  
-  background: #27272a; 
-  border-radius: 8px; 
-  padding: 10px;
-  cursor: pointer; 
-  transition: 0.2s; 
-  position: relative;
-  display: flex; 
-  flex-direction: column;
+  display: flex;           /* Pone los elementos en una fila */
+  gap: 15px;               /* Espacio entre tarjetas */
+  overflow-x: auto;        /* 🚨 Activa el scroll horizontal */
+  padding-bottom: 15px;    /* Deja espacio para la barra de scroll */
+  width: 100%;             /* Ocupa todo el ancho disponible */
+
+  /* Estilo de barra de scroll fina y discreta */
+  scrollbar-width: thin;
+  scrollbar-color: #444 transparent;
 }
 
-/* Y asegúrate de que el contenedor permita deslizar */
-.results-grid {
+/* Personalización de la barra para Chrome/Edge (opcional, para que se vea mejor) */
+.results-grid::-webkit-scrollbar {
+  height: 8px;
+}
+.results-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.results-grid::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+.results-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--bts-purple); /* Se pone morada al tocarla */
+}
+
+
+/* Las tarjetas de las canciones */
+.result-card {
+  /* 🔥 ESTAS 3 LÍNEAS SON LA SOLUCIÓN: */
+  flex-shrink: 0;          /* 🚨 ¡IMPORTANTE! Prohíbe que se aplasten */
+  width: 140px;            /* Ancho fijo */
+  min-width: 140px;        /* Seguridad extra */
+
+  /* Resto del diseño (igual que antes) */
+  background: #27272a;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
   display: flex;
-  gap: 15px;
-  overflow-x: auto; /* Scroll horizontal activado */
-  padding-bottom: 15px;
-  width: 100%; /* Ocupa todo el ancho disponible */
-}display: flex; flex-direction: column;
+  flex-direction: column;
 }
 .result-card:hover { background: #3f3f46; transform: translateY(-3px); }
 .result-card img { width: 100%; aspect-ratio: 1; border-radius: 6px; margin-bottom: 8px; object-fit: cover; }
