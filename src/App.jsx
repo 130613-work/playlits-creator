@@ -44,17 +44,28 @@ const Toast = ({ message, type }) => {
 
 const ShareModal = ({ show, data, onClose }) => {
   if (!show) return null;
-  const text = `¡Misión Cumplida! 💜 Creé "${data.name}" con ${data.count} canciones de BTS.`;
-  const url = "https://tu-app.vercel.app";
+  const webUrl = "https://zippy-sprinkles-8c1f3e.netlify.app";
+  const playlistUrl = `https://open.spotify.com/playlist/${data.playlistId}`;
+  const text = `¡Creé mi playlist "${data.name}"! 💜\n\nCréala tú aquí: ${webUrl}\n\nEscúchala aquí: ${playlistUrl}`;
+
   return (
     <div className="modal-overlay-2" style={{zIndex: 10001}}>
       <div className="share-content">
         <div style={{fontSize:'3rem', marginBottom:'15px'}}>🎉</div>
         <h2 className="share-title">¡Playlist Creada!</h2>
         <p className="share-text">Ya está disponible en tu Spotify.</p>
+        
+        <a href={playlistUrl} target="_blank" rel="noreferrer" style={{display:'block', marginBottom:'20px', color:'#1DB954', fontWeight:'bold', textDecoration:'none'}}>
+          Abrir en Spotify ➜
+        </a>
+
         <div className="share-buttons">
-          <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`} target="_blank" rel="noreferrer" className="btn-share share-x">X (Twitter)</a>
-          <a href={`https://wa.me/?text=${encodeURIComponent(text + " " + url)}`} target="_blank" rel="noreferrer" className="btn-share share-wa">WhatsApp</a>
+          <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer" className="btn-share share-x">
+            X (Twitter)
+          </a>
+          <a href={`https://wa.me/?text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer" className="btn-share share-wa">
+            WhatsApp
+          </a>
         </div>
         <button onClick={onClose} className="btn-close-text">Cerrar</button>
       </div>
@@ -236,11 +247,21 @@ function App() {
             await axios.put(`https://api.spotify.com/v1/playlists/${id}/images`, coverImage.split(',')[1], { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'image/jpeg' } });
         } catch(e) { console.error("Imagen falló", e); showToast("Playlist creada, pero la imagen falló (Permisos)", 'warning'); }
       }
-      setShareModal({ show: true, name: draftName, count: draftTracks.length });
-      localStorage.removeItem("bts_draft_tracks"); setDraftTracks([]); setBtsCounter(0);
+      setShareModal({ show: true, name: draftName, count: draftTracks.length, playlistId: id });
+      
+      localStorage.removeItem("bts_draft_tracks"); 
+      setDraftTracks([]); 
+      setBtsCounter(0);
+      setCoverImage(null); // Limpiamos la imagen también
       getPlaylists(token, profile.id);
-    } catch (e) { showToast("Error al crear", 'error'); } 
-    finally { setLoading(false); }
+
+    } catch (e) { 
+      console.error(e);
+      showToast("Error al crear", 'error'); 
+    } 
+    finally { 
+      setLoading(false); 
+    }
   };
 
   const searchSpotify = async (e) => {
