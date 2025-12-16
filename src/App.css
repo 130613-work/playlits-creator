@@ -120,21 +120,29 @@ body {
 
 /* --- AQUÍ ESTÁ EL CAMBIO: Resultados en Scroll Horizontal --- */
 .results-grid {
-  display: flex; /* Flex en lugar de Grid */
-  gap: 15px;
-  overflow-x: auto; /* Scroll horizontal */
-  padding-bottom: 15px;
-  /* Scrollbar fina */
-  scrollbar-width: thin;
-  scrollbar-color: var(--bts-purple) transparent;
+.result-card {
+  min-width: 140px;  /* Ancho mínimo obligatorio */
+  width: 140px;      /* Ancho fijo */
+  flex-shrink: 0;    /* 🚨 ESTO ES LO IMPORTANTE: Prohíbe que se aplasten */
+  
+  background: #27272a; 
+  border-radius: 8px; 
+  padding: 10px;
+  cursor: pointer; 
+  transition: 0.2s; 
+  position: relative;
+  display: flex; 
+  flex-direction: column;
 }
 
-.result-card {
-  min-width: 130px; /* Ancho fijo */
-  width: 130px;
-  background: #27272a; border-radius: 8px; padding: 10px;
-  cursor: pointer; transition: 0.2s; position: relative;
-  display: flex; flex-direction: column;
+/* Y asegúrate de que el contenedor permita deslizar */
+.results-grid {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto; /* Scroll horizontal activado */
+  padding-bottom: 15px;
+  width: 100%; /* Ocupa todo el ancho disponible */
+}display: flex; flex-direction: column;
 }
 .result-card:hover { background: #3f3f46; transform: translateY(-3px); }
 .result-card img { width: 100%; aspect-ratio: 1; border-radius: 6px; margin-bottom: 8px; object-fit: cover; }
