@@ -1,17 +1,23 @@
-exports.handler = async function(event, context) {
-  // Configuración
-  const clientId = "7c17b5f396fe41df8ec41e87c6324d10";
-  const redirectUri = process.env.REDIRECT_URI || "http://127.0.0.1:8888/callback";
-  // Agregamos 'playlist-modify-public' y 'playlist-modify-private' para CREAR
-  const scopes = "user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private ugc-image-upload";
-  // Construir la URL de Spotify
-  const url = `https://accounts.spotify.com/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+const querystring = require('querystring');
 
-  // Redirigir al usuario a Spotify
+exports.handler = async function(event, context) {
+  const client_id = process.env.SPOTIFY_CLIENT_ID; 
+  const redirect_uri = process.env.REDIRECT_URI; 
+  const scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private ugc-image-upload';
+  const state = Math.random().toString(36).substring(7);
+
+  const query = querystring.stringify({
+    response_type: 'code',
+    client_id: client_id,
+    scope: scope,
+    redirect_uri: redirect_uri,
+    state: state
+  });
+
   return {
     statusCode: 302,
     headers: {
-      Location: url
+      Location: 'https://accounts.spotify.com/authorize?' + query
     }
   };
 };
